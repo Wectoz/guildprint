@@ -19,7 +19,7 @@
 - Namespace: the `local addonName, ns = ...` table only; the sole globals are `GuildprintDB`, `GuildprintCharDB`, `SLASH_GUILDPRINT1`, `SLASH_GUILDPRINT2`.
 - SavedVariables: `GuildprintDB` (account: whisper history), `GuildprintCharDB` (per character: everything else).
 - Channel posts only from a click/keypress (hardware event). Never attempt to bypass.
-- Look: Blizzard templates/atlases/fonts only (gold `GameFontNormal`, `GameFontHighlight` headers, `UIPanelButtonTemplate`, red button for primary actions, `UICheckButtonTemplate`/settings checkbox, `InputBoxTemplate`). Match `docs/superpowers/specs/assets/1.png`–`4.png`. Inspect real Forever frames with `/fstack` to pick templates.
+- Look: Blizzard templates/atlases/fonts only (gold `GameFontNormal`, `GameFontHighlight` headers, `UIPanelButtonTemplate`, red button for primary actions, `UICheckButtonTemplate`/settings checkbox, `InputBoxTemplate`). Match the Forever Options panel. Inspect real Forever frames with `/fstack` to pick templates.
 - Chat message max 255 chars.
 - Default channels: Trade on, General on, LookingForGroup off. Prompt cooldown default 15 min. Prompt auto-close 30 s. Whisper/invite queue interval 3 s. Whisper history window 7 days. Who results cap 50.
 - Slash: `/guildprint` (alias `/gp`) opens the window; `/guildprint post` posts the active ad.

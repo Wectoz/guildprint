@@ -137,9 +137,9 @@ It should feel like part of the Forever client, not a bolted-on tool.
 ## Visual design
 
 Reference: browser mockup `.superpowers/brainstorm/*/content/overview-v3.html`
-and the user's four Forever screenshots in `assets/1.png`–`assets/4.png`
-(Options panel, Raid Frames settings, HUD Edit Mode import dialog, Nameplates
-settings).
+and the user's four Forever screenshots (Options panel, Raid Frames settings,
+HUD Edit Mode import dialog, Nameplates settings), kept locally only and not
+published.
 
 - Build from Blizzard's own templates and atlases so it matches automatically:
   Settings-panel style frame, gold `GameFontNormal`, white section headers with

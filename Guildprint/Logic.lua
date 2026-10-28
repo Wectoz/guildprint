@@ -38,14 +38,24 @@ function Logic.MergeDefaults(db, defaults)
   return db
 end
 
+function Logic.HasText(s)
+  return type(s) == "string" and s:find("%S") ~= nil
+end
+
+-- Chat strips newlines, so they become spaces. The 255 limit is in bytes: never cut a UTF-8 char.
 function Logic.FillPlaceholders(text, guildName)
-  local out = text:gsub("{guild}", function() return guildName or "our guild" end)
-  return out:sub(1, MAX_MSG)
+  local out = text:gsub("{guild}", function() return guildName or "our guild" end):gsub("\r?\n", " ")
+  if #out <= MAX_MSG then return out end
+  out = out:sub(1, MAX_MSG + 1)
+  -- back off to the start of the character that straddles the limit
+  local cut = MAX_MSG + 1
+  while cut > 1 and out:byte(cut) >= 128 and out:byte(cut) < 192 do cut = cut - 1 end
+  return out:sub(1, cut - 1)
 end
 
 function Logic.ActiveAdText(db)
   local ad = db.ads[db.activeAd]
-  if ad and ad.text and ad.text:find("%S") then return ad.text end
+  if ad and Logic.HasText(ad.text) then return ad.text end
   return nil
 end
 
@@ -100,7 +110,11 @@ function Logic.FilterWho(results, history, now, days)
   return rows
 end
 
-Logic.CAPITALS = { [1453] = true, [1454] = true, [1455] = true, [1456] = true, [1457] = true, [1458] = true }
+-- uiMapIDs: Classic-era (1453-1458) and retail (84-90) numbering; Forever's is unconfirmed
+Logic.CAPITALS = {
+  [1453] = true, [1454] = true, [1455] = true, [1456] = true, [1457] = true, [1458] = true,
+  [84] = true, [85] = true, [87] = true, [88] = true, [89] = true, [90] = true,
+}
 
 function Logic.IsCapital(mapID)
   return Logic.CAPITALS[mapID] == true

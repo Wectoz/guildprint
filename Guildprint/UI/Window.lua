@@ -22,6 +22,7 @@ local function ShowPage(key)
   local p = pages[key]
   if not p.frame then
     p.frame = CreateFrame("Frame", nil, body.content)
+    p.frame:Hide()  -- so the Show below fires the OnShow that build() installs
     p.frame:SetAllPoints()
     p.build(p.frame)
   end

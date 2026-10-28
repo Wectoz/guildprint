@@ -59,7 +59,7 @@ function UI.TextArea(parent, w, h, maxLetters)
   e:SetMultiLine(true)
   e:SetAutoFocus(false)
   e:SetFontObject(ChatFontNormal)
-  e:SetMaxLetters(maxLetters)
+  e:SetMaxBytes(maxLetters + 1)  -- chat limit is bytes (+1 for the terminator), not letters
   e:SetPoint("TOPLEFT", 8, -8)
   e:SetPoint("BOTTOMRIGHT", -8, 8)
   e:SetScript("OnEscapePressed", e.ClearFocus)

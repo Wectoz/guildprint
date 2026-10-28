@@ -41,3 +41,10 @@ function test_recent()
   local h = { ["A-R"] = 1e6 - 3600, ["B-R"] = 100 }
   assert(L.IsRecent(h, "A-R", 1e6, 7) and not L.IsRecent(h, "B-R", 1e6, 7) and not L.IsRecent(h, "C-R", 1e6, 7))
 end
+function test_fill_utf8_trunc()
+  local out = L.FillPlaceholders(("x"):rep(254) .. "ö", nil)  -- ö is 2 bytes, cut lands inside it
+  assert(out == ("x"):rep(254), "partial UTF-8 char left at end")
+end
+function test_fill_newlines() assert(L.FillPlaceholders("line one\nline two", nil) == "line one line two") end
+function test_has_text() assert(L.HasText("hi") and not L.HasText("  ") and not L.HasText("") and not L.HasText(nil)) end
+function test_capital_retail_ids() assert(L.IsCapital(84) and L.IsCapital(85)) end

@@ -33,6 +33,9 @@ end
 -- names: list of "Name-Realm"; kind: "whisper" or "invite"
 function ns.QueueSend(names, kind)
   if queue then ns.Print("Already sending. Press Stop first.") return end
+  if kind == "whisper" and not Logic.HasText(ns.db.whisper) then
+    ns.Print("Your whisper text is empty. Write it under Whisper.") return
+  end
   if kind == "whisper" then
     -- never re-whisper someone inside the history window, even if still ticked
     local now, fresh = time(), {}
@@ -167,6 +170,7 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
 
   local function OnWho()
     ns.Off("WHO_LIST_UPDATE", OnWho)
+    C_FriendList.SetWhoToUi(false)  -- the player's own /who goes back to chat
     local num, total = C_FriendList.GetNumWhoResults()
     local raw = {}
     for i = 1, num do

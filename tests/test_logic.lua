@@ -38,3 +38,7 @@ function test_merge()
 end
 function test_capital() assert(L.IsCapital(1454) and not L.IsCapital(1411)) end
 function test_channel_base() assert(L.ChannelBase("General - Durotar") == "General" and L.ChannelBase("Trade") == "Trade") end
+function test_recent()
+  local h = { ["A-R"] = 1e6 - 3600, ["B-R"] = 100 }
+  assert(L.IsRecent(h, "A-R", 1e6, 7) and not L.IsRecent(h, "B-R", 1e6, 7) and not L.IsRecent(h, "C-R", 1e6, 7))
+end

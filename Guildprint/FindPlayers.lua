@@ -33,7 +33,15 @@ end
 -- names: list of "Name-Realm"; kind: "whisper" or "invite"
 function ns.QueueSend(names, kind)
   if queue then ns.Print("Already sending. Press Stop first.") return end
-  if #names == 0 then return end
+  if kind == "whisper" then
+    -- never re-whisper someone inside the history window, even if still ticked
+    local now, fresh = time(), {}
+    for _, n in ipairs(names) do
+      if not Logic.IsRecent(ns.history, n, now, ns.HISTORY_DAYS) then fresh[#fresh + 1] = n end
+    end
+    names = fresh
+  end
+  if #names == 0 then ns.Print("Nobody new to send to.") return end
   queue, queueKind, queuePos = names, kind, 0
   SendNext()
   if queue then ticker = C_Timer.NewTicker(QUEUE_INTERVAL, SendNext) end

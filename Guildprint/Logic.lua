@@ -88,13 +88,16 @@ function Logic.PruneHistory(history, now, days)
   end
 end
 
+function Logic.IsRecent(history, name, now, days)
+  local t = history[name]
+  return t ~= nil and t >= now - days * DAY
+end
+
 function Logic.FilterWho(results, history, now, days)
-  local cutoff = now - days * DAY
   local rows = {}
   for _, r in ipairs(results) do
     if r.guild == "" then
-      local t = history[r.name]
-      r.recent = t ~= nil and t >= cutoff
+      r.recent = Logic.IsRecent(history, r.name, now, days)
       r.selected = not r.recent
       rows[#rows + 1] = r
     end

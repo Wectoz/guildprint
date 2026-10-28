@@ -53,12 +53,17 @@ function Logic.ShouldPrompt(now, lastPromptAt, cooldownMin, blocked)
   return not blocked and now - lastPromptAt >= cooldownMin * 60
 end
 
+-- "General - Durotar" -> "General"
+function Logic.ChannelBase(name)
+  return name:match("^(.-) %- ") or name
+end
+
 -- list is the flat GetChannelList() result: id, name, disabled, id, name, disabled, ...
 function Logic.FindChannelIds(list, enabled)
   local ids = {}
   for i = 1, #list, 3 do
     local id, name, disabled = list[i], list[i + 1], list[i + 2]
-    local base = name and name:match("^(.-) %- ") or name
+    local base = name and Logic.ChannelBase(name)
     if base and enabled[base] and not disabled then ids[#ids + 1] = id end
   end
   return ids

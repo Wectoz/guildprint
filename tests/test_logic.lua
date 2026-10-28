@@ -37,3 +37,4 @@ function test_merge()
   assert(db.channels ~= L.DEFAULTS.channels and db.ads ~= L.DEFAULTS.ads)
 end
 function test_capital() assert(L.IsCapital(1454) and not L.IsCapital(1411)) end
+function test_channel_base() assert(L.ChannelBase("General - Durotar") == "General" and L.ChannelBase("Trade") == "Trade") end

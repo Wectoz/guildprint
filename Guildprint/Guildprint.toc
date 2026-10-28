@@ -1,0 +1,16 @@
+## Interface: 16001, 120001
+## Title: Guildprint
+## Notes: Guild recruiting: post ads, find unguilded players, invite from chat.
+## Author: Wectoz
+## Version: 0.1.0
+## SavedVariables: GuildprintDB
+## SavedVariablesPerCharacter: GuildprintCharDB
+
+Logic.lua
+Core.lua
+UI\Widgets.lua
+UI\Window.lua
+Advertise.lua
+Prompt.lua
+FindPlayers.lua
+Invite.lua

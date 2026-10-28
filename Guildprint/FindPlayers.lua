@@ -168,13 +168,12 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
   local function OnWho()
     ns.Off("WHO_LIST_UPDATE", OnWho)
     local num, total = C_FriendList.GetNumWhoResults()
-    local realm = GetNormalizedRealmName()
     local raw = {}
     for i = 1, num do
       local info = C_FriendList.GetWhoInfo(i)
       if info then
         raw[#raw + 1] = {
-          name = Logic.FullName(info.fullName, realm), guild = info.fullGuildName or "",
+          name = info.fullName, guild = info.fullGuildName or "",
           level = info.level, class = info.classStr, classFile = info.filename, zone = info.area,
         }
       end

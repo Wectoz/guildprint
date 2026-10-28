@@ -19,7 +19,6 @@ function test_who_bad()
   assert(L.WhoQuery("", 30) == nil and L.WhoQuery("abc", 30) == nil and L.WhoQuery(40, 30) == nil
     and L.WhoQuery(0, 30) == nil and L.WhoQuery(10, 61) == nil)
 end
-function test_fullname() assert(L.FullName("Bob", "Realm") == "Bob-Realm" and L.FullName("Bob-Other", "Realm") == "Bob-Other") end
 function test_prune()
   local h = { ["A-R"] = 100, ["B-R"] = 1e6 }
   L.PruneHistory(h, 1e6, 7)

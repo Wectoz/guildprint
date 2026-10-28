@@ -76,11 +76,6 @@ function Logic.WhoQuery(minLevel, maxLevel)
   return lo .. "-" .. hi
 end
 
-function Logic.FullName(name, realm)
-  if name:find("-", 1, true) then return name end
-  return name .. "-" .. realm
-end
-
 function Logic.PruneHistory(history, now, days)
   local cutoff = now - days * DAY
   for name, t in pairs(history) do

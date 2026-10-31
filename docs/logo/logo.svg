@@ -1,32 +1,83 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Guildprint: a herald in a guild tabard blowing a trumpet, carved and gilded on a wood board. Original art. -->
   <defs>
-    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
-      <stop offset="0" stop-color="#2a2f45"/><stop offset="1" stop-color="#0e1018"/>
-    </radialGradient>
-    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#6e1414"/><stop offset=".5" stop-color="#9c2121"/><stop offset="1" stop-color="#6e1414"/>
+    <!-- wood grain: noise stretched along the board -->
+    <filter id="wood" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".007 .14" numOctaves="4" seed="11"/>
+      <feColorMatrix values="0 0 0 .95 -.24  0 0 0 .58 -.16  0 0 0 .28 -.08  0 0 0 0 1"/>
+    </filter>
+    <linearGradient id="gold" x1="0" y1="0" x2=".4" y2="1">
+      <stop offset="0" stop-color="#fbe49a"/><stop offset=".45" stop-color="#d9a640"/><stop offset="1" stop-color="#94621c"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f6d77a"/><stop offset="1" stop-color="#b8862b"/>
+    <linearGradient id="red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b3301f"/><stop offset="1" stop-color="#7a1810"/>
     </linearGradient>
+    <!-- carved, slightly wobbly edges plus worn spots in the gilding -->
+    <filter id="cut" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="7" result="warp"/>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="4" result="cut"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".22" numOctaves="3" seed="2" result="grain"/>
+      <feColorMatrix in="grain" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -16 12" result="wear"/>
+      <feComposite in="cut" in2="wear" operator="in" result="worn"/>
+      <!-- carved-in shadow below and right of every shape -->
+      <feOffset in="worn" dx="2" dy="3" result="off"/>
+      <feColorMatrix in="off" values="0 0 0 0 .08  0 0 0 0 .04  0 0 0 0 .01  0 0 0 .7 0" result="shadow"/>
+      <feMerge><feMergeNode in="shadow"/><feMergeNode in="worn"/></feMerge>
+    </filter>
   </defs>
-  <rect width="512" height="512" fill="url(#bg)"/>
-  <g transform="translate(0 20)">
-  <!-- pole -->
-  <rect x="96" y="66" width="320" height="18" rx="9" fill="url(#gold)"/>
-  <circle cx="92" cy="75" r="16" fill="url(#gold)"/><circle cx="420" cy="75" r="16" fill="url(#gold)"/>
-  <!-- banner with swallowtail -->
-  <path d="M136 84 H376 V430 L256 360 L136 430 Z" fill="url(#cloth)" stroke="url(#gold)" stroke-width="10" stroke-linejoin="round"/>
-  <path d="M160 104 H352 V392 L256 336 L160 392 Z" fill="none" stroke="#f6d77a" stroke-opacity=".35" stroke-width="3"/>
-  <!-- seal -->
-  <circle cx="256" cy="210" r="78" fill="#1a1d2b" stroke="url(#gold)" stroke-width="8"/>
-  <!-- quill -->
-  <g transform="translate(256 214) scale(.78) rotate(-35) translate(-256 -214)">
-    <path d="M256 128 C292 160 292 236 262 280 L256 300 L250 280 C220 236 220 160 256 128 Z" fill="url(#gold)"/>
-    <path d="M256 140 V296" stroke="#6e4a12" stroke-width="4" stroke-linecap="round"/>
-    <path d="M256 180 L238 166 M256 200 L234 186 M256 220 L236 208 M256 180 L274 166 M256 200 L278 186 M256 220 L276 208" stroke="#6e4a12" stroke-width="3" stroke-linecap="round"/>
+
+  <rect width="512" height="512" filter="url(#wood)"/>
+
+  <!-- red: sun and banner -->
+  <g filter="url(#cut)" fill="url(#red)">
+    <circle cx="402" cy="150" r="70"/>
+    <path d="M262 236 L392 186 L392 330 L346 302 L300 346 L262 326 Z"/>
   </g>
-  <!-- ink dot -->
-  <circle cx="305" cy="262" r="7" fill="#f6d77a"/>
+
+  <!-- dark cloak and hood -->
+  <g filter="url(#cut)" fill="#24160c">
+    <path d="M40 490 L40 400 C60 352 96 332 122 322 C94 296 82 254 92 214
+      C104 168 142 140 186 142 C222 144 244 168 246 198 C248 230 244 262 232 286
+      C246 296 266 318 276 350 L290 490 Z"/>
+    <path d="M112 186 C78 200 56 250 52 336 C70 290 88 252 110 234 Z"/>
+  </g>
+
+  <!-- tabard over the chest: red cloth, gold trim, guild tower -->
+  <g filter="url(#cut)">
+    <path fill="url(#red)" stroke="url(#gold)" stroke-width="7" stroke-linejoin="round"
+      d="M150 326 C176 316 210 316 236 326 L262 490 L136 490 Z"/>
+    <path fill="url(#gold)" d="M174 380 L174 434 L226 434 L226 380 L216 380 L216 392 L206 392 L206 380 L196 380 L196 392 L186 392 L186 380 Z"/>
+    <path fill="#7a1810" d="M194 434 L194 414 C194 404 206 404 206 414 L206 434 Z"/>
+  </g>
+
+  <!-- gold: frame, sky lines, trumpet, banner tower -->
+  <g filter="url(#cut)" fill="url(#gold)" stroke="url(#gold)">
+    <rect x="22" y="22" width="468" height="468" fill="none" stroke-width="16"/>
+    <g stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M58 70 H300 M58 90 H250 M58 110 H214 M58 130 H190 M58 150 H176"/>
+      <path d="M326 70 H454 M376 236 H454 M392 256 H454 M404 276 H454 M404 296 H454"/>
+    </g>
+    <path stroke="none" d="M244 232 L398 172 L402 184 L248 246 Z"/>
+    <path stroke="none" d="M394 170 C418 150 440 128 452 106 C462 136 470 172 472 204 C448 194 422 188 404 188 Z"/>
+    <path stroke="none" d="M300 268 L300 314 L356 292 L356 236 L346 240 L346 252 L336 256 L336 244 L326 248 L326 260 L316 264 L316 252 L306 256 L306 266 Z"/>
+  </g>
+
+  <!-- the face: gilded, profile facing the trumpet -->
+  <g filter="url(#cut)">
+    <path fill="url(#gold)" stroke="#24160c" stroke-width="6" stroke-linejoin="round"
+      d="M186 176 C208 176 224 186 228 200 L250 218 L236 224 C246 228 252 236 248 244
+         C242 254 232 262 222 272 C204 284 180 282 166 270 C156 252 158 222 168 198 C172 186 178 178 186 176 Z"/>
+    <g fill="none" stroke="#24160c" stroke-linecap="round">
+      <path d="M198 206 C204 210 212 210 218 206" stroke-width="5"/>
+      <path d="M196 196 C204 192 214 192 222 196" stroke-width="4"/>
+      <path d="M208 240 C200 252 202 262 212 266" stroke-width="4"/>
+    </g>
+  </g>
+
+  <!-- gold carving on the cloak -->
+  <g filter="url(#cut)" fill="none" stroke="url(#gold)" stroke-linecap="round">
+    <path d="M124 220 C118 250 126 282 148 304" stroke-width="4"/>
+    <path d="M150 162 C162 154 178 152 192 154" stroke-width="4"/>
+    <path d="M84 380 C100 366 116 358 132 354 M74 420 C92 404 110 394 128 390 M66 460 C86 444 106 434 124 430" stroke-width="4"/>
   </g>
 </svg>

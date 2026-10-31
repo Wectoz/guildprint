@@ -227,11 +227,22 @@ ns.RegisterPage("messages", "Messages", "Settings", function(f)
 end)
 
 ns.RegisterPage("whisper", "Whisper", "Settings", function(f)
-  UI.Place(UI.Header(f, "Find Players whisper"), f, 4, -4)
-  local hint = UI.Place(f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall"), f, 4, -32)
-  hint:SetText("Sent to each player you pick in Find Players. {guild} becomes your guild name.")
-  local area = UI.Place(UI.TextArea(f, 520, 90, 255), f, 0, -54)
-  area.EditBox:SetScript("OnTextChanged", function(self, user) if user then ns.db.whisper = self:GetText() end end)
-  f:SetScript("OnShow", function() area.EditBox:SetText(ns.db.whisper) end)
-  area.EditBox:SetText(ns.db.whisper)
+  -- key: the ns.db field the box edits
+  local function TextBlock(title, hintText, key, y)
+    UI.Place(UI.Header(f, title), f, 4, y)
+    local hint = UI.Place(f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall"), f, 4, y - 28)
+    hint:SetText(hintText)
+    local area = UI.Place(UI.TextArea(f, 520, 90, 255), f, 0, y - 50)
+    area.EditBox:SetScript("OnTextChanged", function(self, user) if user then ns.db[key] = self:GetText() end end)
+    area.EditBox:SetText(ns.db[key])
+    return area
+  end
+  local whisper = TextBlock("Find Players whisper",
+    "Sent to each player you pick in Find Players. {name} is their name, {guild} your guild's.", "whisper", -4)
+  local welcome = TextBlock("Welcome message",
+    "Said in guild chat when someone you invited joins. Leave empty to stay quiet.", "welcome", -170)
+  f:SetScript("OnShow", function()
+    whisper.EditBox:SetText(ns.db.whisper)
+    welcome.EditBox:SetText(ns.db.welcome)
+  end)
 end)

@@ -23,15 +23,28 @@ function ns.PostAd()
 end
 ns.slash.post = ns.PostAd
 
-local function OnZone()
+-- Forever's capital map IDs are unconfirmed, so a joined Trade channel also counts as "in a city".
+local function InCity()
+  if Logic.IsCapital(C_Map.GetBestMapForUnit("player")) then return true end
+  return #Logic.FindChannelIds({ GetChannelList() }, { Trade = true }) > 0
+end
+
+local function CheckZone()
   local db = ns.db
-  local city = Logic.IsCapital(C_Map.GetBestMapForUnit("player"))
+  local city = InCity()
   if not ((city and db.triggers.city) or (not city and db.triggers.zone)) then return end
   local blocked = InCombatLockdown() or (IsInInstance())
   if not Logic.ShouldPrompt(time(), db.lastPromptAt, db.cooldownMin, blocked) then return end
   if not Logic.ActiveAdText(db) then return end
   db.lastPromptAt = time()
-  ns.ShowPrompt(GetZoneText())
+  local ad = db.ads[db.activeAd]
+  ns.ShowPrompt("Welcome to |cffffd200" .. GetZoneText() .. "|r",
+    'Post "' .. (ad and ad.name or "") .. '" to your ad channels?', "Post Ad", ns.PostAd)
+end
+
+-- The client joins/leaves Trade a moment after the zone change, so look a little later.
+local function OnZone()
+  C_Timer.After(3, CheckZone)
 end
 
 -- The zone event is only registered while a trigger is on.

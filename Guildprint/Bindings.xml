@@ -1,0 +1,8 @@
+<Bindings>
+	<Binding name="GUILDPRINT_NEXT" category="ADDONS">
+		SlashCmdList.GUILDPRINT("next")
+	</Binding>
+	<Binding name="GUILDPRINT_POST" category="ADDONS">
+		SlashCmdList.GUILDPRINT("post")
+	</Binding>
+</Bindings>

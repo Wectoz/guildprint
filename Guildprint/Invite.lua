@@ -8,7 +8,7 @@ local function AddInvite(_, rootDescription, contextData)
   if name == UnitNameUnmodified("player") or C_GuildInfo.MemberExistsByName(name) then return end
   rootDescription:CreateDivider()
   rootDescription:CreateButton("Invite to Guild", function()
-    C_GuildInfo.Invite(name)
+    ns.Invite(name)
     ns.Print("Guild invite sent to " .. name .. ".")
   end)
 end

@@ -1,4 +1,4 @@
--- One-click "post your ad?" popup shown on zone/city entry.
+-- One-click popup: "post your ad?" on zone entry, "invite?" when a whispered player replies.
 local _, ns = ...
 local UI = ns.UI
 
@@ -17,14 +17,19 @@ local function Build()
   frame:EnableMouse(true)
   frame.NineSlice.Text:SetText("Guildprint")
 
-  frame.zone = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
-  frame.zone:SetPoint("TOP", 0, -36)
-  frame.ad = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  frame.ad:SetPoint("TOP", frame.zone, "BOTTOM", 0, -6)
+  frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+  frame.title:SetPoint("TOP", 0, -36)
+  frame.title:SetWidth(310)
+  frame.title:SetWordWrap(false)
+  frame.line = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  frame.line:SetPoint("TOP", frame.title, "BOTTOM", 0, -6)
+  frame.line:SetWidth(310)
+  frame.line:SetWordWrap(false)
 
-  local post = UI.Button(frame, "Post Ad", 110, true)
-  post:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -4, 20)
-  post:SetScript("OnClick", function() ns.PostAd(); Hide() end)
+  local action = UI.Button(frame, "", 110, true)
+  action:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -4, 20)
+  action:SetScript("OnClick", function() frame.onAction(); Hide() end)
+  frame.action = action
   local later = UI.Button(frame, "Not Now", 110)
   later:SetPoint("BOTTOMLEFT", frame, "BOTTOM", 4, 20)
   later:SetScript("OnClick", Hide)
@@ -49,11 +54,13 @@ local function Build()
   end)
 end
 
-function ns.ShowPrompt(zoneName)
+-- shortcut: one popup at a time, a newer one replaces the older; queue them if users miss replies.
+function ns.ShowPrompt(title, line, actionLabel, onAction)
   if not frame then Build() end
-  local ad = ns.db.ads[ns.db.activeAd]
-  frame.zone:SetText("Welcome to |cffffd200" .. (zoneName or "") .. "|r")
-  frame.ad:SetText('Post "' .. (ad and ad.name or "") .. '" to your ad channels?')
+  frame.title:SetText(title)
+  frame.line:SetText(line)
+  frame.action:SetText(actionLabel)
+  frame.onAction = onAction
   frame:Show()
   frame.anim:Restart()
   if timer then timer:Cancel() end

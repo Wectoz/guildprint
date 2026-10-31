@@ -27,7 +27,8 @@ end
 function test_filter_who()
   local rows = L.FilterWho({
     { name = "A-R", guild = "", level = 10 }, { name = "B-R", guild = "Foo", level = 12 }, { name = "C-R", guild = "", level = 14 },
-  }, { ["C-R"] = 1e6 - 3600 }, 1e6, 7)
+    { name = "D-R", guild = "", level = 15 },
+  }, { ["C-R"] = 1e6 - 3600 }, { ["D-R"] = "declined" }, 1e6, 7)
   assert(#rows == 2 and rows[1].selected == true and rows[2].recent == true and rows[2].selected == false)
 end
 function test_merge()
@@ -48,3 +49,32 @@ end
 function test_fill_newlines() assert(L.FillPlaceholders("line one\nline two", nil) == "line one line two") end
 function test_has_text() assert(L.HasText("hi") and not L.HasText("  ") and not L.HasText("") and not L.HasText(nil)) end
 function test_capital_retail_ids() assert(L.IsCapital(84) and L.IsCapital(85)) end
+function test_fill_name()
+  assert(L.FillPlaceholders("Hi {name}, join {guild}", "Oath", "Bob-Realm") == "Hi Bob, join Oath")
+  assert(L.FillPlaceholders("Hi {name}", "Oath", nil) == "Hi there")
+end
+function test_full_name()
+  assert(L.FullName("Bob", "Realm") == "Bob-Realm" and L.FullName("Bob-Other", "Realm") == "Bob-Other")
+  assert(L.FullName("Bob", nil) == "Bob" and L.ShortName("Bob-Realm") == "Bob")
+end
+function test_daily()
+  local d = {}
+  assert(L.TakeDaily(d, "a", 2) and L.TakeDaily(d, "a", 2) and not L.TakeDaily(d, "a", 2))
+  assert(L.TakeDaily(d, "b", 2) and d.n == 1)
+end
+function test_format_pattern()
+  local p = L.FormatToPattern("%s declines your guild invitation.")
+  assert(("Bob-Realm declines your guild invitation."):match(p) == "Bob-Realm")
+  assert(("Bob declines your guild invitationX"):match(p) == nil)
+  assert(("Bob has joined the guild."):match(L.FormatToPattern("%s has joined the guild.")) == "Bob")
+end
+function test_opt_out()
+  for _, yes in ipairs({ "no", "No.", "nah!", "no thanks", "No thank you :)", "I'm not interested", "already in a guild" }) do
+    assert(L.IsOptOut(yes), yes)
+  end
+  assert(L.IsOptOut("no ty") and L.IsOptOut("already have a guild, sorry"))
+  for _, no in ipairs({ "sure!", "yes please", "no problem, invite me", "inv", "know any good quests?",
+      "sure, not in a guild yet", "I dont have a guild, yes pls", "ok no type issue" }) do
+    assert(not L.IsOptOut(no), no)
+  end
+end

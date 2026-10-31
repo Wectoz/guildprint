@@ -12,7 +12,8 @@ Logic.DEFAULTS = {
   channels = { Trade = true, General = true, LookingForGroup = false },
   triggers = { city = true, zone = true },
   cooldownMin = 15,
-  whisper = "Hi! {guild} is recruiting, want an invite?",
+  whisper = "Hi {name}! {guild} is recruiting, want an invite?",
+  welcome = "Welcome to {guild}, {name}!",
   minLevel = 1,
   maxLevel = 60,
   lastPromptAt = 0,
@@ -42,9 +43,22 @@ function Logic.HasText(s)
   return type(s) == "string" and s:find("%S") ~= nil
 end
 
+-- "Bob-Realm" -> "Bob"
+function Logic.ShortName(name)
+  return name:match("^[^-]+") or name
+end
+
+-- One key per player for history/blocked: chat and /who give "Bob" or "Bob-Realm".
+function Logic.FullName(name, realm)
+  if name:find("-", 1, true) or not realm then return name end
+  return name .. "-" .. realm
+end
+
 -- Chat strips newlines, so they become spaces. The 255 limit is in bytes: never cut a UTF-8 char.
-function Logic.FillPlaceholders(text, guildName)
-  local out = text:gsub("{guild}", function() return guildName or "our guild" end):gsub("\r?\n", " ")
+function Logic.FillPlaceholders(text, guildName, playerName)
+  local out = text:gsub("{guild}", function() return guildName or "our guild" end)
+    :gsub("{name}", function() return playerName and Logic.ShortName(playerName) or "there" end)
+    :gsub("\r?\n", " ")
   if #out <= MAX_MSG then return out end
   out = out:sub(1, MAX_MSG + 1)
   -- back off to the start of the character that straddles the limit
@@ -98,10 +112,11 @@ function Logic.IsRecent(history, name, now, days)
   return t ~= nil and t >= now - days * DAY
 end
 
-function Logic.FilterWho(results, history, now, days)
+-- Unguilded players only; blocked ones (declined, opted out) are dropped entirely.
+function Logic.FilterWho(results, history, blocked, now, days)
   local rows = {}
   for _, r in ipairs(results) do
-    if r.guild == "" then
+    if r.guild == "" and not blocked[r.name] then
       r.recent = Logic.IsRecent(history, r.name, now, days)
       r.selected = not r.recent
       rows[#rows + 1] = r
@@ -118,4 +133,36 @@ Logic.CAPITALS = {
 
 function Logic.IsCapital(mapID)
   return Logic.CAPITALS[mapID] == true
+end
+
+-- Counts one send against a per-day cap; false once the cap is reached.
+function Logic.TakeDaily(daily, today, cap)
+  if daily.day ~= today then daily.day, daily.n = today, 0 end
+  if daily.n >= cap then return false end
+  daily.n = daily.n + 1
+  return true
+end
+
+-- "%s declines your guild invitation." -> "^(.+) declines your guild invitation%.$"
+function Logic.FormatToPattern(fmt)
+  local p = fmt:gsub("[%^%$%(%)%.%[%]%*%+%-%?]", "%%%0"):gsub("%%s", "(.+)")
+  return "^" .. p .. "$"
+end
+
+-- shortcut: English replies only; add other languages if users ask.
+-- Only clear refusals: a false match blocks an interested player for good ("not in a guild yet").
+local OPT_OUT_PHRASES = {
+  "no thank", "%f[%w]no ty%f[%W]", "not interested", "stop whisper", "stop messag", "don't whisper",
+  "dont whisper", "leave me alone", "already in a guild", "already have a guild", "already got a guild",
+  "go away", "unsubscribe",
+}
+local OPT_OUT_WORDS = { no = true, nah = true, nope = true, pass = true, nty = true, stop = true, ["no thanks"] = true }
+
+function Logic.IsOptOut(text)
+  local t = text:lower()
+  if OPT_OUT_WORDS[t:gsub("[%p%s]+", " "):match("^%s*(.-)%s*$")] then return true end
+  for _, p in ipairs(OPT_OUT_PHRASES) do
+    if t:find(p) then return true end
+  end
+  return false
 end

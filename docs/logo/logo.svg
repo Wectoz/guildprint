@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#2a2f45"/><stop offset="1" stop-color="#0e1018"/>
+    </radialGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6e1414"/><stop offset=".5" stop-color="#9c2121"/><stop offset="1" stop-color="#6e1414"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6d77a"/><stop offset="1" stop-color="#b8862b"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g transform="translate(0 20)">
+  <!-- pole -->
+  <rect x="96" y="66" width="320" height="18" rx="9" fill="url(#gold)"/>
+  <circle cx="92" cy="75" r="16" fill="url(#gold)"/><circle cx="420" cy="75" r="16" fill="url(#gold)"/>
+  <!-- banner with swallowtail -->
+  <path d="M136 84 H376 V430 L256 360 L136 430 Z" fill="url(#cloth)" stroke="url(#gold)" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M160 104 H352 V392 L256 336 L160 392 Z" fill="none" stroke="#f6d77a" stroke-opacity=".35" stroke-width="3"/>
+  <!-- seal -->
+  <circle cx="256" cy="210" r="78" fill="#1a1d2b" stroke="url(#gold)" stroke-width="8"/>
+  <!-- quill -->
+  <g transform="translate(256 214) scale(.78) rotate(-35) translate(-256 -214)">
+    <path d="M256 128 C292 160 292 236 262 280 L256 300 L250 280 C220 236 220 160 256 128 Z" fill="url(#gold)"/>
+    <path d="M256 140 V296" stroke="#6e4a12" stroke-width="4" stroke-linecap="round"/>
+    <path d="M256 180 L238 166 M256 200 L234 186 M256 220 L236 208 M256 180 L274 166 M256 200 L278 186 M256 220 L276 208" stroke="#6e4a12" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- ink dot -->
+  <circle cx="305" cy="262" r="7" fill="#f6d77a"/>
+  </g>
+</svg>

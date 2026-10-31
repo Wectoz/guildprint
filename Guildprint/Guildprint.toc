@@ -2,7 +2,7 @@
 ## Title: Guildprint
 ## Notes: Guild recruiting: post ads, find unguilded players, invite from chat.
 ## Author: Wectoz
-## Version: 0.1.0
+## Version: 0.2.0
 ## SavedVariables: GuildprintDB
 ## SavedVariablesPerCharacter: GuildprintCharDB
 

@@ -1,8 +1,8 @@
-## Interface: 16001, 120001
+## Interface: 16001
 ## Title: Guildprint
 ## Notes: Guild recruiting: post ads, find unguilded players, invite from chat.
 ## Author: Wectoz
-## Version: 0.2.0
+## Version: 0.2.1
 ## SavedVariables: GuildprintDB
 ## SavedVariablesPerCharacter: GuildprintCharDB
 

@@ -67,6 +67,7 @@ function test_format_pattern()
   assert(("Bob-Realm declines your guild invitation."):match(p) == "Bob-Realm")
   assert(("Bob declines your guild invitationX"):match(p) == nil)
   assert(("Bob has joined the guild."):match(L.FormatToPattern("%s has joined the guild.")) == "Bob")
+  assert(("Bob ist der Gilde beigetreten."):match(L.FormatToPattern("%1$s ist der Gilde beigetreten.")) == "Bob")
 end
 function test_opt_out()
   for _, yes in ipairs({ "no", "No.", "nah!", "no thanks", "No thank you :)", "I'm not interested", "already in a guild" }) do

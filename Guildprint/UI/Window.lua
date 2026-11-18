@@ -108,9 +108,11 @@ local function BuildWindow()
 end
 
 function ns.OpenWindow(page)
-  if not window then BuildWindow() end
   if page then current = page end
-  if window:IsShown() then ShowPage(current) else window:Show() end
+  -- already on screen (own window or Options → AddOns): switch page in place
+  if body and body:IsVisible() then ShowPage(current) return end
+  if not window then BuildWindow() end
+  window:Show()
 end
 
 -- Options → AddOns → Guildprint: an empty canvas until opened.

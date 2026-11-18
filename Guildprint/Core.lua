@@ -53,12 +53,15 @@ local function OnLoaded(_, name)
   GuildprintDB.daily = GuildprintDB.daily or {}
   Logic.PruneHistory(GuildprintDB.history, time(), HISTORY_DAYS)
   -- 0.1.0 stored same-realm names without "-Realm"; keys are now always Name-Realm
-  for name, t in pairs(GuildprintDB.history) do
+  -- collected first: adding keys to a table while pairs() walks it is undefined
+  local renamed = {}
+  for name in pairs(GuildprintDB.history) do
     local key = Logic.FullName(name, GetNormalizedRealmName())
-    if key ~= name then
-      GuildprintDB.history[name] = nil
-      GuildprintDB.history[key] = math.max(t, GuildprintDB.history[key] or 0)
-    end
+    if key ~= name then renamed[name] = key end
+  end
+  for name, key in pairs(renamed) do
+    GuildprintDB.history[key] = math.max(GuildprintDB.history[name], GuildprintDB.history[key] or 0)
+    GuildprintDB.history[name] = nil
   end
   ns.db = GuildprintCharDB
   ns.history = GuildprintDB.history

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.1 — 2026-11-18
+
+Checked against Forever 1.60.1 (build 70959). No game changes affect Guildprint.
+
+### Fixed
+- Declined invites and new members are now recognised in client languages that write the
+  player's name as `%1$s` in system messages.
+- Long replies with accented or non-Latin letters no longer show a broken character in the popup.
+- "Change" on the Advertise page no longer opens a second window when you are in
+  Options → AddOns → Guildprint.
+- Converting whisper history from 0.1.0 could skip players or stop with an error.
+
 ## 0.2.0 — 2026-10-31
 
 ### Added

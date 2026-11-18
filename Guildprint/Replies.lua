@@ -25,8 +25,8 @@ local function OnWhisper(_, text, sender)
     return
   end
   if not CanGuildInvite() or ns.invited[key] or C_GuildInfo.MemberExistsByName(sender) then return end
-  local quote = #text > 60 and (text:sub(1, 57) .. "...") or text
-  ns.ShowPrompt(short .. " replied", '|cffffffff"' .. quote .. '"|r', "Invite", function() ns.Invite(sender) end)
+  -- the popup line has a fixed width and no wrap, so the client shortens long replies itself
+  ns.ShowPrompt(short .. " replied", '|cffffffff"' .. text .. '"|r', "Invite", function() ns.Invite(sender) end)
 end
 
 -- Blizzard's own message formats, so it works in every client language.

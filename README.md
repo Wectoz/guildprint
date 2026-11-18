@@ -38,7 +38,12 @@ Settings are also under Options → AddOns → Guildprint.
 
 ## Verified on Forever 1.60.1
 
-Pending the first in-game run: Interface number, posting to several channels with one click,
-addon messaging limits, chat menu without taint, key bindings listed under AddOns, whisper and
-/who names matching (realm suffix), decline/join system messages being caught, capital detection
-(map IDs or the Trade channel).
+Target: Forever only. Source checked at `Gethe/wow-ui-source` `forever` commit `3d8abb1`
+(1.60.1.70959); every API the addon calls is unchanged since 70532.
+
+Seen on client 1.60.1.70938 (2026-11-17): Interface 16001, the addon loads, saved settings
+are written, the zone auto-prompt fires, no Lua errors in BugGrabber.
+
+Still to check in game: posting to several channels with one click, chat menu without taint,
+key bindings listed under AddOns, whisper and /who names matching (realm suffix), decline/join
+system messages being caught, capital map IDs, the level cap (Find Players assumes 60).

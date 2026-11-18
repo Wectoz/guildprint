@@ -144,8 +144,9 @@ function Logic.TakeDaily(daily, today, cap)
 end
 
 -- "%s declines your guild invitation." -> "^(.+) declines your guild invitation%.$"
+-- Some client languages write the name as "%1$s".
 function Logic.FormatToPattern(fmt)
-  local p = fmt:gsub("[%^%$%(%)%.%[%]%*%+%-%?]", "%%%0"):gsub("%%s", "(.+)")
+  local p = fmt:gsub("%%%d%$s", "%%s"):gsub("[%^%$%(%)%.%[%]%*%+%-%?]", "%%%0"):gsub("%%s", "(.+)")
   return "^" .. p .. "$"
 end
 

@@ -14,7 +14,7 @@ When you enter a capital city or a new zone, a small popup asks if you want to p
 Search a level range with /who and get a list of players without a guild. If /who hits its 50-player limit, Guildprint walks the range one level per click so you see everyone. Tick the ones you want: Guildprint whispers them one every 3 seconds (at most 100 a day), or you invite them one click or keypress at a time. Anyone you whispered in the last 7 days is skipped, so nobody gets spammed.
 
 **Replies and welcomes**
-When someone you whispered writes back, a popup offers a one-click invite. Players who say "no thanks" or decline an invite are never contacted again. When someone you invited joins, Guildprint welcomes them in guild chat.
+When someone you whispered writes back, a popup offers a one-click invite. Players who say "no thanks" or decline an invite are never contacted again ("no thanks" replies are recognised in English; declined invites in every client language). When someone you invited joins, Guildprint welcomes them in guild chat.
 
 **Invite to Guild**
 Right-click a player's name in chat and pick "Invite to Guild".
@@ -38,4 +38,6 @@ Blizzard only lets addons post to channels, run /who and send guild invites from
 
 ## Feedback
 
-Found a bug or have an idea? Leave a comment on this page.
+Found a bug or have an idea? Leave a comment on this page or open an issue on [GitHub](https://github.com/Wectoz/guildprint/issues).
+
+Source and changelog: [github.com/Wectoz/guildprint](https://github.com/Wectoz/guildprint). MIT licensed.

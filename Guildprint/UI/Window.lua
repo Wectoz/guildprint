@@ -1,5 +1,4 @@
--- Main window and Options → AddOns entry. Both show one shared body (sidebar + pages),
--- built on first open and reparented to whichever is visible.
+-- Main window (sidebar + pages, built on first open) and the Options → AddOns entry.
 local _, ns = ...
 local UI = ns.UI
 
@@ -50,50 +49,40 @@ local function NavButton(parent, key, label)
 end
 
 local function BuildBody()
-  body = CreateFrame("Frame")
+  body = CreateFrame("Frame", nil, window)
+  body:SetPoint("TOPLEFT", 10, -28)
+  body:SetPoint("BOTTOMRIGHT", -6, 6)
   local nav = CreateFrame("Frame", nil, body)
   nav:SetPoint("TOPLEFT", 0, 0)
   nav:SetPoint("BOTTOMLEFT", 0, 0)
   nav:SetWidth(190)
-  local y = -6
-  for i, section in ipairs(SECTIONS) do
-    local head = nav:CreateTexture(nil, "BACKGROUND")
-    head:SetAtlas("Options_CategoryHeader_" .. i, true)
-    head:SetPoint("TOPLEFT", 4, y)
+  local y = -10
+  for _, section in ipairs(SECTIONS) do
     local fs = nav:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
-    fs:SetPoint("LEFT", head, "LEFT", 12, 0)
+    fs:SetPoint("TOPLEFT", 16, y)
     fs:SetText(section)
-    y = y - 34
+    y = y - 24
     for _, key in ipairs(order) do
       if pages[key].section == section then
         NavButton(nav, key, pages[key].label):SetPoint("TOPLEFT", 4, y)
         y = y - 22
       end
     end
-    y = y - 10
+    y = y - 14
   end
   body.content = CreateFrame("Frame", nil, body)
   body.content:SetPoint("TOPLEFT", nav, "TOPRIGHT", 14, -6)
   body.content:SetPoint("BOTTOMRIGHT", -14, 10)
 end
 
-local function Attach(parent)
-  if not body then BuildBody() end
-  body:SetParent(parent)
-  body:ClearAllPoints()
-  if parent == window then
-    body:SetPoint("TOPLEFT", 10, -28)
-    body:SetPoint("BOTTOMRIGHT", -6, 6)
-  else
-    body:SetAllPoints()
-  end
-  body:Show()
-  ShowPage(current or "advertise")
-end
-
 local function BuildWindow()
   window = CreateFrame("Frame", "GuildprintFrame", UIParent, "SettingsFrameTemplate")
-  window:SetSize(780, 560)
+  window:SetSize(820, 560)
+  -- the template's own background lets the world show through too much to read on
+  local dark = window:CreateTexture(nil, "BACKGROUND", nil, 1)
+  dark:SetPoint("TOPLEFT", 6, -22)
+  dark:SetPoint("BOTTOMRIGHT", -6, 6)
+  dark:SetColorTexture(0, 0, 0, 0.6)
   window:SetPoint("CENTER")
   window:SetFrameStrata("HIGH")
   window:SetToplevel(true)
@@ -103,28 +92,46 @@ local function BuildWindow()
   window:SetScript("OnDragStart", window.StartMoving)
   window:SetScript("OnDragStop", window.StopMovingOrSizing)
   window.NineSlice.Text:SetText("Guildprint")
-  window:SetScript("OnShow", function() Attach(window) end)
+  BuildBody()
+  window:SetScript("OnShow", function() ShowPage(current or "advertise") end)
+  window:SetScript("OnHide", function() current = nil end)  -- every open starts on Advertise
   tinsert(UISpecialFrames, "GuildprintFrame")  -- Escape closes it
 end
 
 function ns.OpenWindow(page)
   if page then current = page end
-  -- already on screen (own window or Options → AddOns): switch page in place
-  if body and body:IsVisible() then ShowPage(current) return end
   if not window then BuildWindow() end
-  window:Show()
+  if window:IsShown() then ShowPage(current) else window:Show() end
 end
 
--- Options → AddOns → Guildprint: an empty canvas until opened.
+-- Options → AddOns → Guildprint: the client's own settings list. Ads, whispers and
+-- Find Players need more room and live in the window.
 tinsert(ns.ready, function()
-  local canvas = CreateFrame("Frame")
-  canvas:SetScript("OnShow", function(self)
-    if window then window:Hide() end
-    Attach(self)
-  end)
-  local category = Settings.RegisterCanvasLayoutCategory(canvas, "Guildprint")
+  local db, defaults = ns.db, ns.Logic.DEFAULTS
+  local category, layout = Settings.RegisterVerticalLayoutCategory("Guildprint")
+  local function Setting(tbl, def, key, label)
+    local varType = Settings.VarType[type(def[key]) == "boolean" and "Boolean" or "Number"]
+    return Settings.RegisterAddOnSetting(category, "Guildprint_" .. key, key, tbl, varType, label, def[key])
+  end
+
+  for _, t in ipairs({
+    { "city", "Prompt in capital cities", "Offer to post your ad when you enter a capital city." },
+    { "zone", "Prompt in new zones", "Offer to post your ad when you enter a new zone." },
+  }) do
+    local setting = Setting(db.triggers, defaults.triggers, t[1], t[2])
+    setting:SetValueChangedCallback(ns.UpdateTriggers)
+    Settings.CreateCheckbox(category, setting, t[3])
+  end
+
+  local minutes = Settings.CreateSliderOptions(5, 60, 5)
+  minutes:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(v) return v .. " min" end)
+  Settings.CreateSlider(category, Setting(db, defaults, "cooldownMin", "Time between prompts"), minutes,
+    "The shortest wait before Guildprint offers to post your ad again.")
+
+  layout:AddInitializer(CreateSettingsButtonInitializer("Ads, whispers and Find Players", "Open Guildprint",
+    function() HideUIPanel(SettingsPanel); ns.OpenWindow() end,
+    "Opens the Guildprint window. Same as typing /gp.", true))
   Settings.RegisterAddOnCategory(category)
-  ns.settingsCategory = category
 end)
 
 -- ---------------------------------------------------------------- Settings pages

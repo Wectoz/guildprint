@@ -30,7 +30,7 @@ Keep up to 6 ads, a whisper and a welcome text. `{guild}` is replaced with your 
 
 Both have key bindings under Options → Keybindings → AddOns.
 
-Settings are also in Options → AddOns → Guildprint.
+The auto-prompt settings are also in Options → AddOns → Guildprint.
 
 ## Why does posting need a click?
 

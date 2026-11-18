@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.2 — 2026-11-18
+
+### Changed
+- Options → AddOns → Guildprint is now a plain settings list (auto-prompt toggles and
+  timing) with a button that opens the Guildprint window. The squeezed copy of the whole
+  window is gone.
+- The window has a darker background, is a little wider so the channel checkboxes fit,
+  and opens on the Advertise page every time.
+- All buttons use the red style.
+
+### Fixed
+- Sidebar section titles in the window no longer overlap the page names.
+
 ## 0.2.1 — 2026-11-18
 
 Checked against Forever 1.60.1 (build 70959). No game changes affect Guildprint.

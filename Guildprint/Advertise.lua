@@ -79,7 +79,7 @@ ns.RegisterPage("advertise", "Advertise", "Recruiting", function(f)
   UI.Place(UI.Header(f, "Channels"), f, 4, -206)
   local channelRows = {}
 
-  local post = UI.Button(f, "Post Ad Now", 150, true)
+  local post = UI.Button(f, "Post Ad Now", 150)
   post:SetPoint("BOTTOMRIGHT", -4, 4)
   post:SetScript("OnClick", ns.PostAd)
   local hint = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")

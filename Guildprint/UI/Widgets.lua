@@ -3,15 +3,11 @@ local _, ns = ...
 local UI = {}
 ns.UI = UI
 
--- In Forever, UIPanelButtonTemplate is the red button (Options "Close"); the gray one is secondary.
-function UI.Button(parent, text, w, red)
-  local b = CreateFrame("Button", nil, parent, red and "UIPanelButtonTemplate" or "UIPanelButtonGrayTemplate")
+-- In Forever, UIPanelButtonTemplate is the red button (Options "Close"); it greys out when disabled.
+function UI.Button(parent, text, w)
+  local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
   b:SetSize(w or 120, 24)
   b:SetText(text)
-  if not red then
-    b:SetNormalFontObject(GameFontNormal)
-    b:SetHighlightFontObject(GameFontHighlight)
-  end
   return b
 end
 

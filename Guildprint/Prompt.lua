@@ -26,7 +26,7 @@ local function Build()
   frame.line:SetWidth(310)
   frame.line:SetWordWrap(false)
 
-  local action = UI.Button(frame, "", 110, true)
+  local action = UI.Button(frame, "", 110)
   action:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -4, 20)
   action:SetScript("OnClick", function() frame.onAction(); Hide() end)
   frame.action = action

@@ -27,7 +27,7 @@ triggers prompt instead of posting. Whispers are sent automatically once you sta
 
 Both have key bindings under Options → Keybindings → AddOns.
 
-Settings are also under Options → AddOns → Guildprint.
+The auto-prompt settings are also under Options → AddOns → Guildprint.
 
 ## Development
 

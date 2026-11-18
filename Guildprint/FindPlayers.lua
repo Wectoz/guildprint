@@ -116,7 +116,7 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
   child:SetSize(1, 1)
   scroll:SetScrollChild(child)
 
-  local whisperBtn = UI.Button(f, "Whisper selected", 170, true)
+  local whisperBtn = UI.Button(f, "Whisper selected", 170)
   whisperBtn:SetPoint("BOTTOMRIGHT", -4, 6)
   local inviteBtn = UI.Button(f, "Invite selected", 140)
   inviteBtn:SetPoint("RIGHT", whisperBtn, "LEFT", -6, 0)

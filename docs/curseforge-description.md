@@ -26,7 +26,7 @@ Keep up to 6 ads, a whisper and a welcome text. `{guild}` is replaced with your 
 
 - `/gp` or `/guildprint` opens the window
 - `/gp post` posts your active ad
-- `/gp next` sends the next queued invite
+- `/gp next` shows the next queued player's `/ginvite` line
 
 Both have key bindings under Options → Keybindings → AddOns.
 

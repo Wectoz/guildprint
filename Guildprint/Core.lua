@@ -94,7 +94,7 @@ ns.invited = {}
 -- Forever forbids addons from sending guild invites: the player sends /ginvite (or uses
 -- Blizzard's menu) and this hook records it for the welcome prompt and decline tracking.
 hooksecurefunc(C_GuildInfo, "Invite", function(name)
-  if type(name) ~= "string" or name == "" then return end
+  if type(name) ~= "string" or name == "" or not CanGuildInvite() then return end
   ns.invited[ns.FullName(name):lower()] = true
   if ns.OnInviteSent then ns.OnInviteSent() end
 end)

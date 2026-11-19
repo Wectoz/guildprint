@@ -18,6 +18,7 @@ local function OnWhisperFailed(_, text)
   local name = text:match(notFoundPattern)
   local key = name and ns.FullName(name)
   -- only a send from the last few seconds: an old entry means they did get a whisper earlier
+  -- shortcut: your own whisper to them inside those seconds also clears it; track the sent name if it matters
   if key and ns.history[key] and time() - ns.history[key] <= 10 then ns.history[key] = nil end
 end
 
@@ -218,8 +219,9 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
       row.cells[1]:SetText(r.recent and ("|cff808080" .. name .. "|r") or (color and color:WrapTextInColorCode(name) or name))
       row.cells[2]:SetText(r.level)
       row.cells[3]:SetText(r.class)
-      if r.recent then
-        row.cells[4]:SetText("|cff808080whispered " .. math.floor((now - ns.history[r.name]) / 86400) .. "d ago|r")
+      local sentAt = r.recent and ns.history[r.name]  -- gone again if that whisper never arrived
+      if sentAt then
+        row.cells[4]:SetText("|cff808080whispered " .. math.floor((now - sentAt) / 86400) .. "d ago|r")
       else
         row.cells[4]:SetText(r.zone)
       end

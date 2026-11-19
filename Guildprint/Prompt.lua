@@ -33,7 +33,11 @@ local function Build()
   end)
   copy:SetScript("OnKeyDown", function(_, key)
     -- close once copied; the short wait lets the client finish the copy first
-    if key == "C" and (IsControlKeyDown() or IsMetaKeyDown()) then C_Timer.After(0.2, Hide) end
+    if key == "C" and (IsControlKeyDown() or IsMetaKeyDown()) then
+      local copied = frame.copyText
+      -- a newer popup may have replaced this one meanwhile: leave that one open
+      C_Timer.After(0.2, function() if frame.copyText == copied then Hide() end end)
+    end
   end)
   copy:SetScript("OnEscapePressed", Hide)
   copy:SetScript("OnEditFocusGained", copy.HighlightText)

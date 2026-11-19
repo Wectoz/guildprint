@@ -162,15 +162,18 @@ local OPT_OUT_WORDS = { no = true, nah = true, nope = true, pass = true, nty = t
 function Logic.IsOptOut(text)
   local t = text:lower()
   if OPT_OUT_WORDS[t:gsub("[%p%s]+", " "):match("^%s*(.-)%s*$")] then return true end
-  -- "my friend is not interested, but I'd love an invite": a "but" turns it around, let the player decide
-  if t:find("%f[%w]but%f[%W]") then return false end
+  -- "my friend is not interested, but I'd love an invite": what follows the last "but" is what they mean
+  t = t:match(".*%f[%w]but%f[%W](.*)") or t
   for _, p in ipairs(OPT_OUT_PHRASES) do
     if t:find(p) then return true end
   end
   return false
 end
 
--- System messages can carry the name as a chat link: "|Hplayer:Bob-Realm|h[Bob]|h" -> "Bob"
+-- System messages can carry the name as a chat link: "|Hplayer:Bob-Realm:1|h[Bob]|h" -> "Bob-Realm".
+-- The link's own name wins: the shown text drops the realm, and two realms can each have a Bob.
 function Logic.PlainName(s)
-  return (s:gsub("|H.-|h%[?(.-)%]?|h", "%1"))
+  return (s:gsub("|H(.-)|h%[?(.-)%]?|h", function(link, shown)
+    return link:match("^player:([^:]+)") or shown
+  end))
 end

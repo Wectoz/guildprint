@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.4 — 2026-11-19
+
+### Fixed
+- "Thanks, but please stop whispering me" is recognised as a no again.
+- Joins and declines are matched to the right player when two realms have the same name.
+- Find Players could stop refreshing its list after a whisper to a player who had logged off.
+- A `/ginvite` typed without invite rights no longer marks that player as invited.
+- Copying a `/ginvite` line no longer closes a newer popup that appeared right after.
+
 ## 0.2.3 — 2026-11-19
 
 Forever does not let addons send guild invites or post in guild chat on their own.

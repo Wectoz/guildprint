@@ -38,8 +38,8 @@ local function CheckZone()
   if not Logic.ActiveAdText(db) then return end
   db.lastPromptAt = time()
   local ad = db.ads[db.activeAd]
-  ns.ShowPrompt("Welcome to |cffffd200" .. GetZoneText() .. "|r",
-    'Post "' .. (ad and ad.name or "") .. '" to your ad channels?', "Post Ad", ns.PostAd)
+  ns.ShowPrompt({ title = "Welcome to |cffffd200" .. GetZoneText() .. "|r",
+    line = 'Post "' .. (ad and ad.name or "") .. '" to your ad channels?', action = "Post Ad", onAction = ns.PostAd })
 end
 
 -- The client joins/leaves Trade a moment after the zone change, so look a little later.

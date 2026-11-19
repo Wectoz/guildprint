@@ -101,7 +101,8 @@ end
 function ns.OpenWindow(page)
   if page then current = page end
   if not window then BuildWindow() end
-  if window:IsShown() then ShowPage(current) else window:Show() end
+  -- a new window is already shown, so its OnShow never ran: default the page here too
+  if window:IsShown() then ShowPage(current or "advertise") else window:Show() end
 end
 
 -- Options → AddOns → Guildprint: the client's own settings list. Ads, whispers and

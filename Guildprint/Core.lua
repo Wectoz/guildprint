@@ -40,6 +40,15 @@ function ns.Print(msg)
   print("|cffffd200Guildprint|r: " .. msg)
 end
 
+-- Chat payloads are secret during chat messaging lockdown; comparing them would error.
+function ns.Readable(...)
+  if not issecretvalue then return true end
+  for i = 1, select("#", ...) do
+    if issecretvalue((select(i, ...))) then return false end
+  end
+  return true
+end
+
 ns.slash = {}
 -- modules append init functions that need saved data
 ns.ready = {}
@@ -77,18 +86,21 @@ function ns.FullName(name)
   return Logic.FullName(name, GetNormalizedRealmName())
 end
 
--- Players this session's invites went to (key: full name). Join/decline messages are matched against it.
+-- Players this session's invites went to. Join/decline messages are matched against it.
+-- Key: lowercased full name, because a typed /ginvite can be in any case.
+-- shortcut: lower() only folds ASCII, so "/ginvite élise" won't match "Élise"; fold UTF-8 if users ask.
 ns.invited = {}
 
--- Every guild invite goes through here. Needs a click or keypress (Blizzard rule).
-function ns.Invite(name)
-  C_GuildInfo.Invite(name)
-  ns.invited[ns.FullName(name)] = true
+-- Forever forbids addons from sending guild invites: the player sends /ginvite (or uses
+-- Blizzard's menu) and this hook records it for the welcome prompt and decline tracking.
+hooksecurefunc(C_GuildInfo, "Invite", function(name)
+  if type(name) ~= "string" or name == "" then return end
+  ns.invited[ns.FullName(name):lower()] = true
   if ns.OnInviteSent then ns.OnInviteSent() end
-end
+end)
 
 -- Key bindings (Bindings.xml) call the slash handlers.
-BINDING_NAME_GUILDPRINT_NEXT = "Invite next player"
+BINDING_NAME_GUILDPRINT_NEXT = "Show next player to invite"
 BINDING_NAME_GUILDPRINT_POST = "Post guild ad"
 
 SLASH_GUILDPRINT1 = "/guildprint"
@@ -102,6 +114,6 @@ SlashCmdList.GUILDPRINT = function(input)
   elseif sub == "" then
     ns.OpenWindow()
   else
-    ns.Print("Commands: /gp (open window), /gp post (post your ad), /gp next (invite next player)")
+    ns.Print("Commands: /gp (open window), /gp post (post your ad), /gp next (next player to invite)")
   end
 end

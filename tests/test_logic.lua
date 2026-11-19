@@ -79,3 +79,11 @@ function test_opt_out()
     assert(not L.IsOptOut(no), no)
   end
 end
+function test_opt_out_but()
+  assert(not L.IsOptOut("My friend is not interested, but I would love an invite!"))
+  assert(L.IsOptOut("sorry not interested"))
+end
+function test_plain_name()
+  assert(L.PlainName("|Hplayer:Bob-Realm|h[Bob]|h has joined the guild.") == "Bob has joined the guild.")
+  assert(L.PlainName("Bob has joined the guild.") == "Bob has joined the guild.")
+end

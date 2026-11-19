@@ -7,23 +7,23 @@ Guild recruiting for World of Warcraft: Forever.
   (at most once per cooldown, never in combat or instances).
 - **Find Players:** search a level range with /who and list players without a guild. When /who hits
   its 50-player limit, Search walks the range one level per click. Whisper the ones you tick (one
-  every 3 seconds, at most 100 a day, never the same player twice within 7 days) or invite them
-  one click at a time.
-- **Replies:** when someone you whispered answers, a popup offers a one-click invite. "No thanks"
+  every 3 seconds, at most 100 a day, never the same player twice within 7 days) or step through
+  their `/ginvite` lines.
+- **Replies:** when someone you whispered answers, a popup shows a `/ginvite` line to copy into chat. "No thanks"
   style replies (English) and declined invites block that player for good.
-- **Welcome:** says a welcome line in guild chat when someone you invited joins.
-- **Invite to Guild:** right-click a player name in chat.
+- **Welcome:** when someone you invited joins, a popup sends your welcome line to guild chat in one click.
+- **Invite to Guild:** right-click a player name in chat for their `/ginvite` line.
 - **Messages:** write up to 6 ads, a whisper and a welcome text. `{guild}` becomes your guild name,
   `{name}` the player's name.
 
-Channel posts, /who and guild invites need a click or keypress — that's a Blizzard rule, so auto
-triggers prompt instead of posting. Whispers are sent automatically once you start them.
+Channel posts, /who and guild chat need a click or keypress, and guild invites have to be sent by
+you — those are Blizzard rules, so Guildprint prompts instead of acting on its own. Whispers are sent automatically once you start them.
 
 ## Commands
 
 - `/gp` or `/guildprint` — open the window
 - `/gp post` — post the active ad
-- `/gp next` — send the next queued guild invite
+- `/gp next` — show the next queued player's `/ginvite` line
 
 Both have key bindings under Options → Keybindings → AddOns.
 

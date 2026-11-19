@@ -1,4 +1,4 @@
--- Find unguilded players with /who, then whisper them in a slow trickle or invite them one click at a time.
+-- Find unguilded players with /who, then whisper them in a slow trickle or walk through their /ginvite lines.
 local _, ns = ...
 local Logic, UI = ns.Logic, ns.UI
 
@@ -11,6 +11,16 @@ local ROW_H = 22
 local queue, queueKind, queuePos, ticker
 local page   -- set when the page is built; queue updates its progress text
 
+-- A whisper to someone who just logged off was never read: forget it so a later search finds them again.
+local notFoundPattern
+local function OnWhisperFailed(_, text)
+  if not ns.Readable(text) then return end
+  local name = text:match(notFoundPattern)
+  local key = name and ns.FullName(name)
+  -- only a send from the last few seconds: an old entry means they did get a whisper earlier
+  if key and ns.history[key] and time() - ns.history[key] <= 10 then ns.history[key] = nil end
+end
+
 local function StopQueue()
   if ticker then ticker:Cancel(); ticker = nil end
   queue = nil
@@ -20,13 +30,19 @@ end
 local function SendNext()
   if not queue then return end
   if queueKind == "whisper" and C_ChatInfo.InChatMessagingLockdown() then return end  -- retry next tick
-  -- skip players who declined/opted out (or got an invite) since the list was built
-  local name, key
+  -- skip players who declined/opted out (or got an invite) since the list was built;
+  -- the whisper check is redone here so no path can whisper anyone twice inside the window
+  local name, key, done
   repeat
     queuePos = queuePos + 1
     name = queue[queuePos]
     key = name and ns.FullName(name)
-  until not name or not (ns.blocked[key] or (queueKind == "invite" and ns.invited[key]))
+    if queueKind == "invite" then
+      done = key and ns.invited[key:lower()]
+    else
+      done = key and Logic.IsRecent(ns.history, key, time(), ns.HISTORY_DAYS)
+    end
+  until not name or not (ns.blocked[key] or done)
   if not name then StopQueue() return end
   if queueKind == "whisper" then
     if not Logic.TakeDaily(ns.daily, date("%Y-%m-%d"), DAILY_WHISPERS) then
@@ -37,13 +53,14 @@ local function SendNext()
     SendChat(Logic.FillPlaceholders(ns.db.whisper, (GetGuildInfo("player")), name), "WHISPER", nil, name)
     ns.history[key] = time()
   else
-    ns.Invite(name)
+    local left = #queue - queuePos
+    ns.PromptInvite(name, "Invite " .. Logic.ShortName(name), left > 0 and (left .. " more after this one") or nil, true)
   end
   if page then page:UpdateQueue() end
   if queuePos >= #queue then StopQueue() end
 end
 
--- Invites need a click or keypress each (Blizzard rule): button, key binding or /gp next.
+-- Shows the next queued player's /ginvite line: button, key binding or /gp next.
 function ns.InviteNext()
   if queueKind == "invite" and queue then SendNext() else ns.Print("No invites queued. Use Invite selected in Find Players.") end
 end
@@ -61,7 +78,7 @@ function ns.QueueSend(names, kind)
     local key = ns.FullName(n)
     -- never re-whisper someone inside the history window, even if still ticked
     local skip = kind == "whisper" and Logic.IsRecent(ns.history, key, now, ns.HISTORY_DAYS)
-      or kind == "invite" and ns.invited[key]
+      or kind == "invite" and ns.invited[key:lower()]
     if not ns.blocked[key] and not skip then
       fresh[#fresh + 1] = n
     end
@@ -70,9 +87,13 @@ function ns.QueueSend(names, kind)
   if #names == 0 then ns.Print("Nobody new to send to.") return end
   queue, queueKind, queuePos = names, kind, 0
   if kind == "invite" then
-    ns.Print("Press Invite next, your Guildprint key binding or /gp next for each invite.")
-    if page then page:UpdateQueue() end
+    ns.Print("Paste each /ginvite line into chat. Invite next, your key binding or /gp next shows the next player.")
+    SendNext()
     return
+  end
+  if not notFoundPattern and ERR_CHAT_PLAYER_NOT_FOUND_S then
+    notFoundPattern = Logic.FormatToPattern(ERR_CHAT_PLAYER_NOT_FOUND_S)
+    ns.On("CHAT_MSG_SYSTEM", OnWhisperFailed)
   end
   SendNext()
   if queue then ticker = C_Timer.NewTicker(QUEUE_INTERVAL, SendNext) end
@@ -209,7 +230,9 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
     f:UpdateQueue()
   end
 
+  local whoTimer
   local function OnWho()
+    if whoTimer then whoTimer:Cancel(); whoTimer = nil end
     ns.Off("WHO_LIST_UPDATE", OnWho)
     C_FriendList.SetWhoToUi(false)  -- the player's own /who goes back to chat
     local num, total = C_FriendList.GetNumWhoResults()
@@ -222,6 +245,7 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
       if info then
         local name = ns.FullName(info.fullName)
         if not seen[name] then
+          seen[name] = true
           raw[#raw + 1] = {
             name = name, target = info.fullName, guild = info.fullGuildName or "",
             level = info.level, class = info.classStr, classFile = info.filename, zone = info.area,
@@ -270,6 +294,14 @@ ns.RegisterPage("find", "Find Players", "Recruiting", function(f)
     C_FriendList.SetWhoToUi(true)
     ns.Off("WHO_LIST_UPDATE", OnWho)
     ns.On("WHO_LIST_UPDATE", OnWho)
+    -- a throttled /who never answers: give up so the player's next own /who isn't taken for ours
+    if whoTimer then whoTimer:Cancel() end
+    whoTimer = C_Timer.NewTimer(10, function()
+      whoTimer = nil
+      ns.Off("WHO_LIST_UPDATE", OnWho)
+      C_FriendList.SetWhoToUi(false)
+      status:SetText("|cffff4040No answer from /who. Wait a moment and search again.|r")
+    end)
     C_FriendList.SendWho(query, Enum.SocialWhoOrigin.Unknown)
   end)
 

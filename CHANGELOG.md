@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.3 — 2026-11-19
+
+Forever does not let addons send guild invites or post in guild chat on their own.
+Guildprint now works with that instead of running into "action blocked".
+
+### Changed
+- Invites: the reply popup, Find Players and the right-click entry now show a `/ginvite Name`
+  line to copy and paste into chat, instead of an Invite button that Blizzard blocks.
+- Welcome message: when someone you invited joins, a popup offers to send your welcome with
+  one click. It also works for players you invited by typing `/ginvite` yourself.
+
+### Fixed
+- The first `/gp` after logging in could show an error instead of the window.
+- The same player could be whispered twice if they appeared twice in one list.
+- A reply like "my friend is not interested, but I'd love an invite" no longer blocks that player.
+- An open reply popup closes if the player then says "no thanks".
+- A /who search that gets no answer gives up after 10 seconds instead of taking your next
+  own /who as its result.
+- A whisper to a player who had just logged off no longer counts as sent.
+
 ## 0.2.2 — 2026-11-18
 
 ### Changed
